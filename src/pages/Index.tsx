@@ -1,16 +1,118 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { MetricCard } from '@/components/MetricCard';
+import { getMockPlatformStats, getMockPulses } from '@/lib/mock-data';
+import { formatSTX, truncateAddress } from '@/lib/stx-utils';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Send, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const stats = getMockPlatformStats();
+const pulses = getMockPulses();
+
+export default function Dashboard() {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="space-y-8">
+      {/* Hero */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-3xl font-display text-foreground">Protocol Dashboard</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Real-time overview of StackPulse on-chain micro-tipping activity
+          </p>
+        </div>
+        <Link to="/send">
+          <Button size="lg" className="gap-2">
+            <Send className="h-4 w-4" />
+            Send a Pulse
+          </Button>
+        </Link>
+      </motion.div>
+
+      {/* Stats Grid */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard
+          label="Total Pulses"
+          value={stats.totalPulses.toLocaleString()}
+          trend={{ value: '12.3%', positive: true }}
+        />
+        <MetricCard
+          label="Total Volume"
+          value={formatSTX(stats.totalVolume)}
+          sublabel="All time"
+          trend={{ value: '8.7%', positive: true }}
+        />
+        <MetricCard
+          label="Platform Fees"
+          value={formatSTX(stats.totalFees)}
+          sublabel="1% of volume"
+        />
+        <MetricCard
+          label="Unique Senders"
+          value={stats.uniqueSenders.toLocaleString()}
+          trend={{ value: '5.1%', positive: true }}
+        />
+      </div>
+
+      {/* Recent Activity */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-foreground">Recent Pulses</h2>
+          <Link to="/activity" className="text-sm text-primary hover:underline flex items-center gap-1">
+            View all <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <div className="rounded-lg bg-card shadow-sm overflow-hidden">
+          <div className="divide-y divide-border">
+            {pulses.slice(0, 8).map((pulse, i) => (
+              <motion.div
+                key={pulse.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-colors"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                  <Send className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {truncateAddress(pulse.sender)}
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {truncateAddress(pulse.recipient)}
+                    </span>
+                  </div>
+                  {pulse.message && (
+                    <p className="mt-0.5 text-xs text-muted-foreground truncate max-w-md">
+                      {pulse.message}
+                    </p>
+                  )}
+                </div>
+                <span className="text-sm font-semibold tabular-nums text-foreground whitespace-nowrap">
+                  {formatSTX(pulse.amount)}
+                </span>
+                <StatusIcon status={pulse.status} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
-const Index = PlaceholderIndex;
-
-export default Index;
+function StatusIcon({ status }: { status: string }) {
+  if (status === 'confirmed')
+    return <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />;
+  if (status === 'pending')
+    return <Clock className="h-4 w-4 text-warning flex-shrink-0" />;
+  return <XCircle className="h-4 w-4 text-destructive flex-shrink-0" />;
+}
