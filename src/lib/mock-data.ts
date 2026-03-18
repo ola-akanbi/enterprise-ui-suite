@@ -49,7 +49,7 @@ export function generateMockPulses(count: number = 25): Pulse[] {
     while (recipientIdx === senderIdx) {
       recipientIdx = randomBetween(0, ADDRESSES.length - 1);
     }
-    const amount = randomBetween(50000, 50000000); // 0.05 to 50 STX
+    const amount = randomBetween(50000, 50000000);
     const protocolFee = Math.floor(amount * 0.01);
     const statuses: Pulse['status'][] = ['confirmed', 'confirmed', 'confirmed', 'confirmed', 'pending', 'failed'];
     return {
@@ -70,7 +70,7 @@ export function generateMockPulses(count: number = 25): Pulse[] {
 export function generatePlatformStats(): PlatformStats {
   return {
     totalPulses: 12847,
-    totalVolume: 2456000000000, // ~2,456,000 STX
+    totalVolume: 2456000000000,
     totalFees: 24560000000,
     uniqueSenders: 1893,
     uniqueRecipients: 3241,
@@ -95,11 +95,41 @@ let _pulses: Pulse[] | null = null;
 let _stats: PlatformStats | null = null;
 
 export function getMockPulses(): Pulse[] {
-  if (!_pulses) _pulses = generateMockPulses(25);
+  if (!_pulses) _pulses = generateMockPulses(40);
   return _pulses;
 }
 
 export function getMockPlatformStats(): PlatformStats {
   if (!_stats) _stats = generatePlatformStats();
   return _stats;
+}
+
+// Volume chart data generators
+export function generateVolumeData(range: '24h' | '7d' | '30d'): { label: string; volume: number }[] {
+  if (range === '24h') {
+    return Array.from({ length: 24 }, (_, i) => ({
+      label: `${i}:00`,
+      volume: randomBetween(200, 3500),
+    }));
+  }
+  if (range === '7d') {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return days.map((d) => ({ label: d, volume: randomBetween(5000, 25000) }));
+  }
+  return Array.from({ length: 30 }, (_, i) => ({
+    label: `D${i + 1}`,
+    volume: randomBetween(3000, 18000),
+  }));
+}
+
+// Sparkline data for metric cards
+export function generateSparkline(points: number = 12): number[] {
+  const data: number[] = [];
+  let val = randomBetween(40, 60);
+  for (let i = 0; i < points; i++) {
+    val += randomBetween(-10, 12);
+    val = Math.max(10, Math.min(100, val));
+    data.push(val);
+  }
+  return data;
 }

@@ -1,17 +1,57 @@
+import { useState, useMemo } from 'react';
 import { MetricCard } from '@/components/MetricCard';
-import { getMockPlatformStats, getMockPulses } from '@/lib/mock-data';
+import { VolumeChart } from '@/components/VolumeChart';
+import { SkeletonMetricCard, SkeletonActivityRow } from '@/components/SkeletonCard';
+import { getMockPlatformStats, getMockPulses, generateVolumeData, generateSparkline } from '@/lib/mock-data';
 import { formatSTX, truncateAddress } from '@/lib/stx-utils';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Send, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowRight, Send, Clock, CheckCircle2, XCircle, Zap, Users, TrendingUp, Coins } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { usePageTitle } from '@/hooks/use-page-title';
+import { useSimulatedLoading } from '@/hooks/use-simulated-loading';
 
 const stats = getMockPlatformStats();
 const pulses = getMockPulses();
+const sparklines = {
+  pulses: generateSparkline(),
+  volume: generateSparkline(),
+  fees: generateSparkline(),
+  senders: generateSparkline(),
+};
+
+const TIME_RANGES = ['24h', '7d', '30d'] as const;
 
 export default function Dashboard() {
+  usePageTitle('Dashboard');
+  const loading = useSimulatedLoading(600);
+  const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('7d');
+
+  const volumeData = useMemo(() => generateVolumeData(timeRange), [timeRange]);
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div className="h-8 w-56 bg-muted rounded animate-pulse" />
+            <div className="h-4 w-72 bg-muted rounded animate-pulse mt-2" />
+          </div>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonMetricCard key={i} />)}
+        </div>
+        <div className="rounded-lg bg-card p-6 shadow-sm">
+          <div className="h-[240px] bg-muted/50 rounded animate-pulse" />
+        </div>
+        <div className="rounded-lg bg-card shadow-sm overflow-hidden divide-y divide-border">
+          {Array.from({ length: 6 }).map((_, i) => <SkeletonActivityRow key={i} />)}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Hero */}
@@ -34,30 +74,59 @@ export default function Dashboard() {
         </Link>
       </motion.div>
 
+      {/* Time range pills */}
+      <div className="flex items-center gap-2">
+        {TIME_RANGES.map((r) => (
+          <button
+            key={r}
+            onClick={() => setTimeRange(r)}
+            className={cn(
+              'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              timeRange === r
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:text-foreground'
+            )}
+          >
+            {r}
+          </button>
+        ))}
+      </div>
+
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           label="Total Pulses"
           value={stats.totalPulses.toLocaleString()}
           trend={{ value: '12.3%', positive: true }}
+          icon={Zap}
+          sparkline={sparklines.pulses}
         />
         <MetricCard
           label="Total Volume"
           value={formatSTX(stats.totalVolume)}
           sublabel="All time"
           trend={{ value: '8.7%', positive: true }}
+          icon={TrendingUp}
+          sparkline={sparklines.volume}
         />
         <MetricCard
           label="Platform Fees"
           value={formatSTX(stats.totalFees)}
           sublabel="1% of volume"
+          icon={Coins}
+          sparkline={sparklines.fees}
         />
         <MetricCard
           label="Unique Senders"
           value={stats.uniqueSenders.toLocaleString()}
           trend={{ value: '5.1%', positive: true }}
+          icon={Users}
+          sparkline={sparklines.senders}
         />
       </div>
+
+      {/* Volume Chart */}
+      <VolumeChart data={volumeData} timeRange={timeRange} />
 
       {/* Recent Activity */}
       <div>
@@ -75,9 +144,9 @@ export default function Dashboard() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-colors"
+                className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-all hover:shadow-sm group"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/15 transition-colors">
                   <Send className="h-3.5 w-3.5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">

@@ -31,20 +31,29 @@ export function TransactionStepper({ currentState, className }: TransactionStepp
   const currentIdx = failed ? 5 : ORDER[currentState];
 
   return (
-    <div className={cn('flex items-center gap-1', className)}>
+    <div
+      className={cn('flex items-center gap-1', className)}
+      role="progressbar"
+      aria-valuenow={currentIdx}
+      aria-valuemax={5}
+      aria-label={`Transaction status: ${currentState}`}
+    >
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        Transaction step: {currentState.replace('-', ' ')}
+      </div>
       {STEPS.map((step, i) => {
         const isCompleted = !failed && currentIdx > i;
         const isCurrent = !failed && currentIdx === i;
-        const isFailed = failed && i === 4; // fail at pending step
+        const isFailed = failed && i === 4;
 
         return (
           <div key={step.key} className="flex items-center gap-1">
             <div className="flex flex-col items-center gap-1">
               <div
                 className={cn(
-                  'flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-colors',
-                  isCompleted && 'bg-success text-success-foreground',
-                  isCurrent && 'bg-primary text-primary-foreground ring-2 ring-primary/30',
+                  'flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300',
+                  isCompleted && 'bg-success text-success-foreground scale-100',
+                  isCurrent && 'bg-primary text-primary-foreground ring-2 ring-primary/30 scale-110',
                   isFailed && 'bg-destructive text-destructive-foreground',
                   !isCompleted && !isCurrent && !isFailed && 'bg-muted text-muted-foreground'
                 )}
@@ -59,7 +68,7 @@ export function TransactionStepper({ currentState, className }: TransactionStepp
             {i < STEPS.length - 1 && (
               <div
                 className={cn(
-                  'h-0.5 w-4 mb-4 rounded-full',
+                  'h-0.5 w-4 mb-4 rounded-full transition-colors duration-300',
                   isCompleted ? 'bg-success' : 'bg-muted'
                 )}
               />

@@ -3,17 +3,20 @@ import { useParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { EmptyState } from '@/components/EmptyState';
 import { getMockPulses } from '@/lib/mock-data';
 import { formatSTX, truncateAddress } from '@/lib/stx-utils';
-import { Search, Copy, ExternalLink, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Search, Copy, ExternalLink, CheckCircle2, Clock, XCircle, FileSearch } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from '@/hooks/use-toast';
 import type { Pulse } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 const allPulses = getMockPulses();
 
 export default function PulseLookup() {
+  usePageTitle('Pulse Lookup');
   const { id: paramId } = useParams();
   const [input, setInput] = useState(paramId || '');
   const [pulse, setPulse] = useState<Pulse | null>(
@@ -53,9 +56,8 @@ export default function PulseLookup() {
         <Button onClick={handleSearch}>Search</Button>
       </div>
 
-      {/* Hint: show first ID for demo */}
       <p className="text-xs text-muted-foreground">
-        Try: <button onClick={() => { setInput(allPulses[0].id); }} className="text-primary hover:underline font-mono">{allPulses[0].id}</button>
+        Try: <button onClick={() => { setInput(allPulses[0].id); }} className="text-primary hover:underline font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">{allPulses[0].id}</button>
       </p>
 
       <AnimatePresence>
@@ -94,13 +96,11 @@ export default function PulseLookup() {
           </motion.div>
         )}
         {notFound && !pulse && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="rounded-lg bg-card p-8 text-center shadow-sm"
-          >
-            <p className="text-sm text-muted-foreground">No Pulse found with that ID.</p>
-          </motion.div>
+          <EmptyState
+            icon={FileSearch}
+            title="Pulse not found"
+            description="No Pulse transaction found with that ID. Check the ID and try again."
+          />
         )}
       </AnimatePresence>
     </div>
@@ -122,7 +122,10 @@ function Row({ label, value, mono, bold, onCopy }: { label: string; value: strin
       <div className="flex items-center gap-1.5">
         <span className={cn('text-sm', mono && 'font-mono text-xs', bold && 'font-bold')}>{value}</span>
         {onCopy && (
-          <button onClick={onCopy} className="text-muted-foreground hover:text-foreground">
+          <button
+            onClick={onCopy}
+            className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          >
             <Copy className="h-3 w-3" />
           </button>
         )}

@@ -1,12 +1,15 @@
 import { useWallet } from '@/lib/wallet-context';
+import { useTheme } from '@/lib/theme-context';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Download, Info } from 'lucide-react';
+import { ExternalLink, Download, Moon, Sun } from 'lucide-react';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 export default function SettingsPage() {
+  usePageTitle('Settings');
   const { network, setNetwork } = useWallet();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="mx-auto max-w-xl space-y-8">
@@ -14,6 +17,24 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-display text-foreground">Settings</h1>
         <p className="text-sm text-muted-foreground">Configure network and app preferences</p>
       </div>
+
+      {/* Appearance */}
+      <section className="rounded-lg bg-card p-6 shadow-sm space-y-4">
+        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">Appearance</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {theme === 'dark' ? <Moon className="h-4 w-4 text-muted-foreground" /> : <Sun className="h-4 w-4 text-muted-foreground" />}
+            <div>
+              <p className="text-sm font-medium text-foreground">Dark Mode</p>
+              <p className="text-xs text-muted-foreground">Toggle between light and dark themes</p>
+            </div>
+          </div>
+          <Switch
+            checked={theme === 'dark'}
+            onCheckedChange={toggleTheme}
+          />
+        </div>
+      </section>
 
       {/* Network */}
       <section className="rounded-lg bg-card p-6 shadow-sm space-y-4">

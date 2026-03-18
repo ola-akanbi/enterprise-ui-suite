@@ -8,11 +8,13 @@ import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { useWallet } from '@/lib/wallet-context';
 import { isValidStxAddress, stxToMicro, formatSTX } from '@/lib/stx-utils';
 import type { TxLifecycleState } from '@/lib/types';
-import { Send, AlertCircle, CheckCircle2, RotateCcw, ExternalLink } from 'lucide-react';
+import { Send, AlertCircle, CheckCircle2, RotateCcw, ExternalLink, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 export default function SendPulse() {
+  usePageTitle('Send Pulse');
   const { connected, address, connect } = useWallet();
   const [recipient, setRecipient] = useState('');
   const [amountStr, setAmountStr] = useState('');
@@ -195,7 +197,10 @@ export default function SendPulse() {
               size="lg"
             >
               {isProcessing ? (
-                <>Processing...</>
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Processing...
+                </>
               ) : (
                 <>
                   <Send className="h-4 w-4" />

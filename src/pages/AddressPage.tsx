@@ -2,18 +2,23 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { MetricCard } from '@/components/MetricCard';
+import { EmptyState } from '@/components/EmptyState';
 import { generateUserStats, getMockPulses } from '@/lib/mock-data';
 import { formatSTX, truncateAddress, isValidStxAddress } from '@/lib/stx-utils';
-import { Search, Send, ArrowRight, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Search, Send, ArrowRight, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { UserStats } from '@/lib/types';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 export default function AddressPage() {
+  usePageTitle('Address Insights');
   const [input, setInput] = useState('');
   const [stats, setStats] = useState<UserStats | null>(null);
   const [error, setError] = useState('');
+  const [searched, setSearched] = useState(false);
 
   const handleLookup = () => {
+    setSearched(true);
     if (!isValidStxAddress(input)) {
       setError('Please enter a valid Stacks address');
       setStats(null);
@@ -67,7 +72,7 @@ export default function AddressPage() {
             {pulses.length > 0 && (
               <div className="rounded-lg bg-card shadow-sm overflow-hidden divide-y divide-border">
                 {pulses.map((p) => (
-                  <div key={p.id} className="flex items-center gap-3 px-4 py-3 text-sm">
+                  <div key={p.id} className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-muted/40 transition-colors">
                     <Send className="h-3.5 w-3.5 text-primary flex-shrink-0" />
                     <span className="font-mono text-xs text-muted-foreground">{truncateAddress(p.sender)}</span>
                     <ArrowRight className="h-3 w-3 text-muted-foreground" />
@@ -79,11 +84,21 @@ export default function AddressPage() {
             )}
 
             {pulses.length === 0 && (
-              <div className="rounded-lg bg-card p-8 text-center shadow-sm">
-                <p className="text-sm text-muted-foreground">No Pulse activity found for this address.</p>
-              </div>
+              <EmptyState
+                icon={MapPin}
+                title="No activity found"
+                description="This address has no Pulse transactions on the current network."
+              />
             )}
           </motion.div>
+        )}
+
+        {searched && !stats && !error && (
+          <EmptyState
+            icon={Search}
+            title="No results"
+            description="Enter a valid Stacks address to view their Pulse activity and stats."
+          />
         )}
       </AnimatePresence>
     </div>
