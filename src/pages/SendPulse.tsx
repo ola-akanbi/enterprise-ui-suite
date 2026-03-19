@@ -13,6 +13,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { usePageTitle } from '@/hooks/use-page-title';
 
+const EXPLORER_URL = 'https://explorer.hiro.so';
+
 export default function SendPulse() {
   usePageTitle('Send Pulse');
   const { connected, address, connect } = useWallet();
@@ -79,7 +81,7 @@ export default function SendPulse() {
             key="success"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-lg bg-card p-8 shadow-sm text-center space-y-4"
+            className="rounded-lg bg-card p-8 shadow-sm text-center space-y-4 border border-border/50"
           >
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/15">
               <CheckCircle2 className="h-7 w-7 text-success" />
@@ -89,9 +91,11 @@ export default function SendPulse() {
               {formatSTX(amountMicro)} sent successfully
             </p>
             <div className="flex items-center justify-center gap-3">
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <ExternalLink className="h-3.5 w-3.5" /> View on Explorer
-              </Button>
+              <a href={`${EXPLORER_URL}/txid/0x...`} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <ExternalLink className="h-3.5 w-3.5" /> View on Explorer
+                </Button>
+              </a>
               <Button onClick={handleReset} size="sm" className="gap-1.5">
                 <RotateCcw className="h-3.5 w-3.5" /> Send Another
               </Button>
@@ -102,7 +106,7 @@ export default function SendPulse() {
             key="failed"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-lg bg-card p-8 shadow-sm text-center space-y-4"
+            className="rounded-lg bg-card p-8 shadow-sm text-center space-y-4 border border-border/50"
           >
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/15">
               <AlertCircle className="h-7 w-7 text-destructive" />
@@ -118,7 +122,7 @@ export default function SendPulse() {
             key="form"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="rounded-lg bg-card p-6 shadow-sm space-y-5"
+            className="rounded-lg bg-card p-6 shadow-sm space-y-5 border border-border/50"
           >
             {!connected && (
               <div className="flex items-center gap-3 rounded-md bg-warning/10 px-4 py-3 text-sm text-warning">
@@ -188,7 +192,7 @@ export default function SendPulse() {
               />
             </div>
 
-            {amount > 0 && <FeeBreakdown amount={amountMicro} fee={fee} />}
+            <FeeBreakdown amount={amountMicro} fee={fee} />
 
             <Button
               onClick={handleSubmit}

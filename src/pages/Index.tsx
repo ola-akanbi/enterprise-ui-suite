@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { useSimulatedLoading } from '@/hooks/use-simulated-loading';
+import { formatDistanceToNow } from 'date-fns';
 
 const stats = getMockPlatformStats();
 const pulses = getMockPulses();
@@ -67,7 +68,7 @@ export default function Dashboard() {
           </p>
         </div>
         <Link to="/send">
-          <Button size="lg" className="gap-2">
+          <Button size="lg" className="gap-2 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all">
             <Send className="h-4 w-4" />
             Send a Pulse
           </Button>
@@ -81,10 +82,10 @@ export default function Dashboard() {
             key={r}
             onClick={() => setTimeRange(r)}
             className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+              'rounded-full px-3 py-1 text-xs font-medium transition-all',
               timeRange === r
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:text-foreground'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80'
             )}
           >
             {r}
@@ -136,7 +137,7 @@ export default function Dashboard() {
             View all <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
-        <div className="rounded-lg bg-card shadow-sm overflow-hidden">
+        <div className="rounded-lg bg-card shadow-sm overflow-hidden border border-border/50">
           <div className="divide-y divide-border">
             {pulses.slice(0, 8).map((pulse, i) => (
               <motion.div
@@ -144,7 +145,7 @@ export default function Dashboard() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-all hover:shadow-sm group"
+                className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 hover:shadow-sm transition-all group cursor-pointer"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/15 transition-colors">
                   <Send className="h-3.5 w-3.5 text-primary" />
@@ -165,10 +166,16 @@ export default function Dashboard() {
                     </p>
                   )}
                 </div>
-                <span className="text-sm font-semibold tabular-nums text-foreground whitespace-nowrap">
-                  {formatSTX(pulse.amount)}
-                </span>
-                <StatusIcon status={pulse.status} />
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground hidden sm:inline whitespace-nowrap">
+                    {formatDistanceToNow(new Date(pulse.timestamp), { addSuffix: true })}
+                  </span>
+                  <span className="text-sm font-semibold tabular-nums text-foreground whitespace-nowrap">
+                    {formatSTX(pulse.amount)}
+                  </span>
+                  <StatusIcon status={pulse.status} />
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                </div>
               </motion.div>
             ))}
           </div>
