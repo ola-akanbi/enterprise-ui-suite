@@ -5,8 +5,9 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Download, Moon, Sun, Bell, BellOff } from 'lucide-react';
 import { usePageTitle } from '@/hooks/use-page-title';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { getNotificationsEnabled, setNotificationsEnabled } from '@/hooks/use-pulse-notifications';
 
 export default function SettingsPage() {
   usePageTitle('Settings');
