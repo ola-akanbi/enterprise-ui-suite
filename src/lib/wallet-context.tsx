@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { toast } from '@/hooks/use-toast';
+import { truncateAddress } from '@/lib/stx-utils';
 
 interface WalletContextType {
   connected: boolean;
