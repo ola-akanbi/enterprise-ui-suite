@@ -9,6 +9,7 @@ import { Search, Send, ArrowRight, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { UserStats } from '@/lib/types';
 import { usePageTitle } from '@/hooks/use-page-title';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 export default function AddressPage() {
   usePageTitle('Address Insights');
