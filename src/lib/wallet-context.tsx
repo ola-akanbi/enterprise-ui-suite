@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { toast } from '@/hooks/use-toast';
+import { truncateAddress } from '@/lib/stx-utils';
 
 interface WalletContextType {
   connected: boolean;
@@ -24,8 +26,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [connected, setConnected] = useState(false);
   const [network, setNetwork] = useState<'testnet' | 'mainnet'>('testnet');
 
-  const connect = useCallback(() => setConnected(true), []);
-  const disconnect = useCallback(() => setConnected(false), []);
+  const connect = useCallback(() => {
+    setConnected(true);
+    toast({ title: 'Wallet connected', description: truncateAddress(MOCK_ADDRESS) });
+  }, []);
+  const disconnect = useCallback(() => {
+    setConnected(false);
+    toast({ title: 'Wallet disconnected' });
+  }, []);
 
   return (
     <WalletContext.Provider
