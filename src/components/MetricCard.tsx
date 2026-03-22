@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { motion, animate } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 import { useEffect, useRef } from 'react';
@@ -16,15 +16,14 @@ interface MetricCardProps {
 
 function AnimatedValue({ value }: { value: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const numMatch = value.match(/^([\d,.]+)/);
 
   useEffect(() => {
+    const numMatch = value.match(/^([\d,.]+)/);
     if (!numMatch || !ref.current) return;
     const target = parseFloat(numMatch[1].replace(/,/g, ''));
     if (isNaN(target)) return;
     const suffix = value.slice(numMatch[1].length);
-    const mv = useMotionValue(0);
-    const controls = animate(mv, target, {
+    const controls = animate(0, target, {
       duration: 1.2,
       ease: 'easeOut',
       onUpdate(v) {
