@@ -13,7 +13,11 @@ export default function SettingsPage() {
   usePageTitle('Settings');
   const { network, setNetwork } = useWallet();
   const { theme, toggleTheme } = useTheme();
-  const [notifications, setNotifications] = useState(true);
+  const [notifications, setNotifications] = useState(getNotificationsEnabled);
+
+  useEffect(() => {
+    setNotificationsEnabled(notifications);
+  }, [notifications]);
 
   const handleExport = () => {
     const diagnostics = {

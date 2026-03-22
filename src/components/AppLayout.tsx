@@ -3,9 +3,11 @@ import { AnimatePresence } from 'framer-motion';
 import { AppNav } from './AppNav';
 import { Footer } from './Footer';
 import { PageTransition } from './PageTransition';
+import { usePulseNotifications } from '@/hooks/use-pulse-notifications';
 
 export function AppLayout() {
   const location = useLocation();
+  usePulseNotifications();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
