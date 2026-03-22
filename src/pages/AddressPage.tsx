@@ -35,6 +35,7 @@ export default function AddressPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
+      <Breadcrumbs items={stats ? [{ label: 'Address Insights', href: '/address' }, { label: truncateAddress(stats.address) }] : [{ label: 'Address Insights' }]} />
       <div>
         <h1 className="text-2xl font-display text-foreground">Address Insights</h1>
         <p className="text-sm text-muted-foreground">Look up any Stacks address to see their Pulse activity</p>

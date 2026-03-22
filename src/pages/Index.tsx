@@ -68,7 +68,7 @@ export default function Dashboard() {
           </p>
         </div>
         <Link to="/send">
-          <Button size="lg" className="gap-2 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all">
+          <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-primary/80 shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/40 hover:scale-[1.02] transition-all duration-200">
             <Send className="h-4 w-4" />
             Send a Pulse
           </Button>

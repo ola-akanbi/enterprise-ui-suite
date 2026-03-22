@@ -13,6 +13,7 @@ import { toast } from '@/hooks/use-toast';
 import type { Pulse } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { usePageTitle } from '@/hooks/use-page-title';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { formatDistanceToNow, format } from 'date-fns';
 
 const allPulses = getMockPulses();
