@@ -41,6 +41,7 @@ export default function PulseLookup() {
   return (
     <TooltipProvider>
       <div className="mx-auto max-w-2xl space-y-6">
+        <Breadcrumbs items={pulse ? [{ label: 'Pulse Lookup', href: '/pulse' }, { label: pulse.id }] : [{ label: 'Pulse Lookup' }]} />
         <div>
           <h1 className="text-2xl font-display text-foreground">Pulse Lookup</h1>
           <p className="text-sm text-muted-foreground">Search by Pulse ID to view transaction details</p>
