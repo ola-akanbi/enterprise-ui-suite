@@ -3,21 +3,27 @@ import { useTheme } from '@/lib/theme-context';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Download, Moon, Sun, Bell, BellOff } from 'lucide-react';
+import { ExternalLink, Download, Moon, Sun, Bell, BellOff, Volume2, VolumeX } from 'lucide-react';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { useState, useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { getNotificationsEnabled, setNotificationsEnabled } from '@/hooks/use-pulse-notifications';
+import { getSoundEnabled, setSoundEnabled } from '@/lib/notification-sound';
 
 export default function SettingsPage() {
   usePageTitle('Settings');
   const { network, setNetwork } = useWallet();
   const { theme, toggleTheme } = useTheme();
   const [notifications, setNotifications] = useState(getNotificationsEnabled);
+  const [sound, setSound] = useState(getSoundEnabled);
 
   useEffect(() => {
     setNotificationsEnabled(notifications);
   }, [notifications]);
+
+  useEffect(() => {
+    setSoundEnabled(sound);
+  }, [sound]);
 
   const handleExport = () => {
     const diagnostics = {
@@ -78,6 +84,19 @@ export default function SettingsPage() {
           <Switch
             checked={notifications}
             onCheckedChange={setNotifications}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {sound ? <Volume2 className="h-4 w-4 text-muted-foreground" /> : <VolumeX className="h-4 w-4 text-muted-foreground" />}
+            <div>
+              <p className="text-sm font-medium text-foreground">Sound Effects</p>
+              <p className="text-xs text-muted-foreground">Play a chime for incoming pulses</p>
+            </div>
+          </div>
+          <Switch
+            checked={sound}
+            onCheckedChange={setSound}
           />
         </div>
       </section>

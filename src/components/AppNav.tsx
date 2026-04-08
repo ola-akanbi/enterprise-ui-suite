@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { NetworkBadge } from './NetworkBadge';
 import { WalletButton } from './WalletButton';
 import { ThemeToggle } from './ThemeToggle';
+import { NotificationPanel } from './NotificationPanel';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Zap, LayoutDashboard, Send, Activity, Search, Settings, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -98,6 +99,7 @@ export function AppNav() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <NotificationPanel />
           <ThemeToggle />
           <NetworkBadge className="hidden sm:inline-flex" />
           <WalletButton />

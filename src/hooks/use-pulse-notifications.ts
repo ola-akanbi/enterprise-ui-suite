@@ -2,6 +2,8 @@ import { useEffect, useCallback } from 'react';
 import { useWallet } from '@/lib/wallet-context';
 import { toast } from '@/hooks/use-toast';
 import { truncateAddress } from '@/lib/stx-utils';
+import { useNotificationStore } from '@/lib/notification-store';
+import { playNotificationSound } from '@/lib/notification-sound';
 
 const ADDRESSES = [
   'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7',
@@ -42,6 +44,7 @@ function randomBetween(min: number, max: number) {
 
 export function usePulseNotifications() {
   const { connected } = useWallet();
+  const { addNotification } = useNotificationStore();
 
   const fireNotification = useCallback(() => {
     if (!getNotificationsEnabled()) return;
@@ -55,7 +58,10 @@ export function usePulseNotifications() {
       description: `${truncateAddress(sender)} sent ${amount} STX — "${message.slice(0, 40)}…"`,
       className: 'border-l-4 border-l-primary',
     });
-  }, []);
+
+    addNotification({ sender, amount, message });
+    playNotificationSound();
+  }, [addNotification]);
 
   useEffect(() => {
     if (!connected) return;

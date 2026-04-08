@@ -4,9 +4,19 @@ import { AppNav } from './AppNav';
 import { Footer } from './Footer';
 import { PageTransition } from './PageTransition';
 import { usePulseNotifications } from '@/hooks/use-pulse-notifications';
+import { NotificationProvider } from '@/lib/notification-store';
 
 export function AppLayout() {
   const location = useLocation();
+
+  return (
+    <NotificationProvider>
+      <AppLayoutInner location={location} />
+    </NotificationProvider>
+  );
+}
+
+function AppLayoutInner({ location }: { location: ReturnType<typeof useLocation> }) {
   usePulseNotifications();
 
   return (
